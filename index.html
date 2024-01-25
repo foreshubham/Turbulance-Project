@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="style.css
+">
+<body>
+    <h1>
+        SVG Turbulence Filter Test
+      </h1>
+      <p id="sentence" contenteditable="true" spellcheck="false">
+        The <strong>feTurbulence</strong> SVG filter generates and renders <em>Perlin noise</em>. This can be used
+        by CSS to distort <strong>elements and text</strong>. Try selecting or editing <em>this text</em>. You can fiddle
+        with the sliders below to <strong>change the effect</strong>.
+      </p>
+      
+      <div class="sliders">
+        <div class="slider">
+          <label for="turbulenceNumOctavesRange">Turbulence Number of Octaves</label>
+          <output for="turbulenceNumOctavesRange" id="turbulenceNumOctavesRangeOutput"></output>
+          <input class="slider__range" type="range" name="turbulenceNumOctavesRange" id="turbulenceNumOctavesRange" data-filter-id="turbulence" data-filter-attr="numOctaves" min="1" max="9" value="5" />
+        </div>
+        <div class="slider">
+          <label for="turbulenceBaseFrequencyRange">Turbulence Base Frequency</label>
+          <output for="turbulenceBaseFrequencyRange" id="turbulenceBaseFrequencyRangeOutput"></output>
+          <input class="slider__range" type="range" name="turbulenceBaseFrequencyRange" id="turbulenceBaseFrequencyRange" data-filter-id="turbulence" data-filter-attr="baseFrequency" min="0.0001" max="0.002" step="0.0001" value="0.0002" />
+        </div>
+        <div class="slider">
+          <label for="turbulenceBaseSeedRange">Turbulence Seed</label>
+          <output for="turbulenceBaseSeedRange" id="turbulenceBaseSeedRangeOutput"></output>
+          <input class="slider__range" type="range" name="turbulenceBaseSeedRange" id="turbulenceBaseSeedRange" data-filter-id="turbulence" data-filter-attr="seed" min="0" max="1000" step="1" value="500" />
+        </div>
+        <div class="slider">
+          <label for="displacerScaleRange">Displacer Scale</label>
+          <output for="displacerScaleRange" id="displacerScaleRangeOutput"></output>
+          <input class="slider__range" type="range" name="displacerScaleRange" id="displacerScaleRange" data-filter-id="displacer" data-filter-attr="scale" min="1" max="100" value="50" />
+        </div>
+      </div>
+      
+      <svg class="filter">
+        <defs>
+          <filter id="filter">
+            <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.0001 " numOctaves="5" result="NOISE">
+            </feTurbulence>
+            <feGaussianBlur in="SourceGraphic" result="BLURRED" stdDeviation="0"></feGaussianBlur>
+            <feDisplacementMap id="displacer" in2="NOISE" in="BLURRED" scale="15" xChannelSelector="R" yChannelSelector="R" result="DISPLACED"></feDisplacementMap>
+          </filter>
+        </defs>
+        
+      </svg>
+
+      <script>
+        // set the value of the element turbulenceBaseSeedRange to a random number between 0 and 1000
+document.getElementById("turbulenceBaseSeedRange").value = Math.floor(
+  Math.random() * 1000
+);
+// set each atrribute of the filter of the svg element to the values of the corresponding range inputs based on the data-filter-id and data-filter-attr attributes and set the output element's value to the value of the range input when the input's value changes
+const sliders = document.querySelectorAll(".slider__range");
+const filter = document.querySelector(".filter");
+sliders.forEach((slider) => {
+  // set the output element to the value of the range input
+  const output = slider.parentNode.querySelector("output");
+  output.value = slider.value;
+  const filterId = slider.dataset.filterId;
+  const filterAttr = slider.dataset.filterAttr;
+  const filterElement = filter.querySelector(`#${filterId}`);
+  filterElement.setAttribute(filterAttr, slider.value);
+  slider.addEventListener("input", function () {
+    output.value = this.value;
+    filterElement.setAttribute(filterAttr, this.value);
+  });
+});
+      </script>
+</body>
+</html>
